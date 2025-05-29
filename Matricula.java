@@ -1,6 +1,6 @@
 package model;
 import java.util.*;
-
+//clase de pessoa base para Aluno e Professor
 class Pessoa {
     protected String nome;
     protected String cpf;
@@ -9,8 +9,12 @@ class Pessoa {
         this.nome = nome;
         this.cpf = cpf;
     }
-}
 
+    public String getCpf() {
+        return cpf;
+    }
+}
+//aluno e professor herdam de Pessoa ^^
 class Aluno extends Pessoa {
     public Aluno(String nome, String cpf) {
         super(nome, cpf);
@@ -20,7 +24,7 @@ class Aluno extends Pessoa {
         return "Aluno: " + nome + " | CPF: " + cpf;
     }
 }
-
+// esse é o professor, que também herda de Pessoa <3
 class Professor extends Pessoa {
     public Professor(String nome, String cpf) {
         super(nome, cpf);
@@ -30,7 +34,7 @@ class Professor extends Pessoa {
         return "Professor: " + nome + " | CPF: " + cpf;
     }
 }
-
+// disciplina tem um nome e um professor
 class Disciplina {
     private String nome;
     private Professor professor;
@@ -52,12 +56,12 @@ class Disciplina {
         return "Disciplina: " + nome + " | Professor: " + professor.nome;
     }
 }
-
+// tem que ser um desempenho, com aluno, disciplina, nota e frequência
 class Desempenho {
     Aluno aluno;
     private Disciplina disciplina;
-    private double nota;
-    private int frequencia;
+    double nota;
+    int frequencia;
 
     public Desempenho(Aluno aluno, Disciplina disciplina, double nota, int frequencia) {
         this.aluno = aluno;
@@ -131,7 +135,8 @@ public class Matricula {
     static List<HorarioAula> horarios = new ArrayList<>();
     static GradeCurricular grade = new GradeCurricular("Ciência da Computação");
     static CalendarioAcademico calendario = new CalendarioAcademico();
-
+// será que arrumar um metodo pra guardar os dados é uma boa ideia?
+    // talvez seja interessante salvar os dados em um arquivo ou banco de dados hmmm aiai 
     public static void main(String[] args) {
         int opcao;
         do {
@@ -147,23 +152,26 @@ public class Matricula {
             System.out.println("9. Cadastrar Horário de Aula");
             System.out.println("10. Ver Calendário Acadêmico");
             System.out.println("11. Adicionar Evento ao Calendário");
+            System.out.println("12. Gerar Relatório Administrativo");
             System.out.println("0. Sair");
             System.out.print("Opção: ");
             opcao = scanner.nextInt();
             scanner.nextLine();
 
             switch(opcao) {
-                case 1: cadastrarAluno();
-                case 2: cadastrarProfessor();
-                case 3: cadastrarDisciplina();
-                case 4: registrarDesempenho();
-                case 5: listarAlunos();
-                case 6: listarDisciplinas();
-                case 7: verDesempenho();
-                case 8: gerenciarGrade();
-                case 9: cadastrarHorario();
-                case 10: calendario.listarEventos();
-                case 11: adicionarEvento();
+                case 1: cadastrarAluno(); break;
+                case 2: cadastrarProfessor(); break;
+                case 3: cadastrarDisciplina(); break;
+                case 4: registrarDesempenho(); break;
+                case 5: listarAlunos(); break;
+                case 6: listarDisciplinas(); break;
+                case 7: verDesempenho(); break;
+                case 8: gerenciarGrade(); break;
+                case 9: cadastrarHorario(); break;
+                case 10: calendario.listarEventos(); break;
+                case 11: adicionarEvento(); break;
+                case 12: gerarRelatorio(); break;
+                case 0: System.out.println("Saindo..."); break;
             }
         } while (opcao != 0);
     }
@@ -189,7 +197,8 @@ public class Matricula {
         String horario = scanner.nextLine();
         horarios.add(new HorarioAula(diaSemana, horario, disciplinas.get(i)));
         System.out.println("Horário de aula cadastrado com sucesso.");
-        pausa();
+        
+
     }
 
 
@@ -232,25 +241,99 @@ public class Matricula {
 
 
     static void cadastrarAluno() {
+    String nome = "";
+    String cpf = "";
+    
+        
+        while (true) {
         System.out.print("Nome do aluno: ");
-        String nome = scanner.nextLine();
+        nome = scanner.nextLine().trim();
+        
+        if (nome.isEmpty()) {
+            System.out.println("Nome não pode estar vazio. Tente novamente.");
+        } else if (nome.matches(".*\\d.*")) {
+            System.out.println("Nome não pode conter números. Tente novamente.");
+        } else {
+            break; // Sai do loop quando o nome for válido
+        }
+        }
+    
+        
+        while (true) {
         System.out.print("CPF do aluno: ");
-        String cpf = scanner.nextLine();
+        cpf = scanner.nextLine().trim();
+        
+        if (cpf.isEmpty()) {
+            System.out.println("CPF não pode estar vazio. Tente novamente.");
+        } else if (!cpf.matches("\\d+")) {
+            System.out.println("CPF deve conter apenas números. Tente novamente.");
+        } else if (cpf.length() != 11) {
+            System.out.println("CPF deve ter 11 dígitos. Tente novamente.");
+        } else {
+            break; // tudo certo
+        }
+        }
+    
         alunos.add(new Aluno(nome, cpf));
         System.out.println("Aluno cadastrado com sucesso.");
         pausa();
-    }
+}   
 
     static void cadastrarProfessor() {
+    String nome = "";
+    String cpf = "";
+    
+    // Loop para validação do NOME
+    while (true) {
         System.out.print("Nome do professor: ");
-        String nome = scanner.nextLine();
-        System.out.print("CPF do professor: ");
-        String cpf = scanner.nextLine();
-        professores.add(new Professor(nome, cpf));
-        System.out.println("Professor cadastrado com sucesso.");
-        pausa();
+        nome = scanner.nextLine().trim(); // muito util o trim() para remover espaços extras
+        
+        if (nome.isEmpty()) {
+            System.out.println("⚠ Erro: O nome não pode ser vazio. Tente novamente.");
+        } else if (nome.matches(".*\\d.*")) { // preciso entender melhor essa regex
+            System.out.println("⚠ Erro: O nome não pode conter números. Tente novamente.");
+        } else {
+            break; // Nome válido, sai do loop
+        }
     }
+    
+    // Loop para validação do CPF
+    while (true) {
+        System.out.print("CPF do professor (apenas números): ");
+        cpf = scanner.nextLine().trim();
+        
+        if (cpf.isEmpty()) {
+            System.out.println("⚠ Erro: CPF não pode ser vazio.");
+        } else if (!cpf.matches("\\d{11}")) {
+            System.out.println("⚠ Erro: CPF deve ter 11 dígitos (sem pontos ou traços).");
+        } else if (cpfJaCadastrado(cpf)) { 
+            System.out.println("⚠ Erro: Este CPF já está cadastrado.");
+        } else {
+            break; // CPF válido, sai do loop
+        }
+    }
+    
+    professores.add(new Professor(nome, cpf));
+    System.out.println("✅ Professor cadastrado com sucesso!");
+    pausa();
+}
 
+private static boolean cpfJaCadastrado(String cpf) {
+    // Verifica se o CPF já está em Professores
+    for (Professor prof : professores) {
+        if (prof.getCpf().equals(cpf)) {
+            return true;
+        }
+    }
+    // Verifica se o CPF já está em Alunos
+    for (Aluno aluno : alunos) {
+        if (aluno.getCpf().equals(cpf)) {
+            return true;
+        }
+    }
+    return false; // CPF não cadastrado em nenhuma lista
+}
+// os metodos são bem simples mas pra mim foi difícil entender como organizar tudo isso
     static void cadastrarDisciplina() {
         System.out.print("Nome da disciplina: ");
         String nome = scanner.nextLine();
@@ -319,6 +402,32 @@ public class Matricula {
         }
         pausa();
     }
+    private static void gerarRelatorio() {
+    System.out.println("\n--- Relatório Administrativo ---");
+    System.out.println("Total de Alunos: " + alunos.size());
+    System.out.println("Total de Professores: " + professores.size());
+    System.out.println("Total de Disciplinas: " + disciplinas.size());
+    System.out.println("Total de Registros de Desempenho: " + desempenhos.size());
+
+    // Análise de desempenho geral
+    if (!desempenhos.isEmpty()) {
+        double somaNotas = 0;
+        int somaFrequencia = 0;
+        for (Desempenho d : desempenhos) {
+            somaNotas += d.nota;
+            somaFrequencia += d.frequencia;
+        }
+        double mediaNota = somaNotas / desempenhos.size();
+        double mediaFrequencia = somaFrequencia / (double) desempenhos.size();
+
+        System.out.printf("Média geral de notas: %.2f\n", mediaNota);
+        System.out.printf("Média geral de frequência: %.2f%%\n", mediaFrequencia);
+    } else {
+        System.out.println("Ainda não há dados de desempenho para análise.");
+    }
+
+    pausa();
+}
 
 
 
